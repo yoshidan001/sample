@@ -26,15 +26,16 @@ public List<String> combine(Map<String, String> map) {
 [問3-1]：B ： SELECT s.store_name FROM STORE s,PRESENT p WHERE p.PRESENT_NO=1000 AND p.STORE_ID=s.STORE_ID;
 [問3-2]：B ：SELECT s.store_name FROM STORE s WHERE <日付型カラム> = TO_DATE('12/10/25',’YY/MM/DD’);
 [問3-3]：B ： SELECT DISTINCT store_name FROM STORE s,PRESENT p WHERE p.STORE_ID=s.STORE_ID;
+			(STOREテーブルのSTORE_IDが重複している可能性を考慮）
 [問3-4]：A ： SELECT s.store_name FROM STORE s,UNIT u WHERE s.SALES_UNIT_CD=u.UNIT_CD;
 [問3-5]：A ： SELECT s.store_name,COUNT(*) AS cnt FROM STORE s,PRESENT p 
-         WHERE p.STORE_ID = s.STORE_ID AND s.STORE_ID LIKE  'H10%' GROUP BY s.STORE_NAME
-         (問題ではGROUP_BYはSTORE_IDになっていましたが、STORE_NAMEですよね）
+         	WHERE p.STORE_ID = s.STORE_ID AND s.STORE_ID LIKE  'H10%' GROUP BY s.STORE_NAME
+         	(問題ではGROUP_BYはSTORE_IDになっていましたが、STORE_NAMEですよね）
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 【問4】正しい対策を以下に記載してください。（A～Gより選択)
 
 [問4-1]：C
-[問4-2]：F	
+[問4-2]：D	
 [問4-3]：E
 [問4-4]：F
 [問4-5]：G
@@ -48,7 +49,7 @@ public List<String> combine(Map<String, String> map) {
 [問5-5]：F
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 【問6】最も適切な選択肢（AorB,A～C）を以下に記載してください。
-
+			
 [問6-1]：B
 [問6-2]：C
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
@@ -56,7 +57,7 @@ public List<String> combine(Map<String, String> map) {
 
 [問7-1]：F
 [問7-2]：F
-[問7-3]：F
+[問7-3]：T
 [問7-4]：F
 [問7-5]：F
 ～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
