@@ -20,18 +20,161 @@
 6,6
 
 あなたの答え)
-
-
+3,3
+1,2
+1,3
+1,15
+9,3
+2,15
+4,3
+2,4
+1,8
+2,8
+1,20
+13,2
+9,12
+4,18
+2,12
+1,12
+5,20
+11,19
+2,16
+1,5
+2,13
+1,10
+1,16
+7,17
+3,10
 
 ■あなたが書いたコードの内容や工夫した点を簡潔に書いてください。こちらも評価対象です。
 
-
+・Java8 API使い倒す
+・対象活字を抜き取るところは、ネステッドループにするとDBとは異なりインデックスとかがないので、ハッシュジョインにして取得
+・画像データのハッシュ作成をStream APIを使用して作成
+・インデックス付きのforEachはjavaにはないため座標取得のために通常はfor分使用するが、今回は疑似クロージャを使って座標を取得
 
 ■あなたが書いたJavaのバージョンを教えてください。
 
-
+・Javaのバージョンは1.8.0
+・Eclipse 4.3でJava8コンパイル用のプラグイン使用（http://download.eclipse.org/eclipse/updates/4.3-P-builds/）
+・Mac OS X 10.9.2
+・文字コードはShift_JIS
+・改行コードはLF
 
 ■あなたが書いたコードそのものを貼り付けてください。適宜コメントもコードにつけてください。
 
+codeiq用に作ったgithubのレポジトリにアップしています。
+入力ファイルなどもそのまま配置しているのでmvn eclipse:eclipse実行後にmainを実行すればそのまま実行できます。
+
+https://github.com/yoshidan001/sample/tree/master/codeiq/src/main/java/codeiq/q799
+
+一応はりつけておきます。
+
+public class Q799 {
+	
+	private static final Charset CHARSET = Charset.forName("Shift_JIS");
+	
+	private static final Path INPUT_FILE = Paths.get("src/main/resources/q799/gutenberg.csv");
+	
+	private static final String TARGET = "STAY HUNGRY, STAY FOOLISH";
+	
+	public static void main(String[] args) throws IOException{
+				
+		//MapReduceを使用してハッシュデータ作成
+		Map<String,List<Position>> index = createImageData();
+		index.entrySet().forEach(System.out::println);
+	
+		//ハッシュジョインで表示
+		char[] ch = TARGET.toCharArray();
+		for(int i = 0 ; i < ch.length; i++){
+			String val = String.valueOf(ch[i]);
+			List<Position> pos = index.get(val);	
+			Position p = pos.get(0);
+			pos.remove(0);
+			if(pos.isEmpty()){
+				index.remove(val);
+			}
+			System.out.println(String.format("%s:%s", val,p));
+		}
+	}
+	
+	/**
+	 * 画像データを読み込みハッシュを作成する.
+	 * Java8のStreamAPIを使ってやってみる。
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
+	private static Map<String,List<Position>> createImageData() throws IOException{
+		
+		//Y方向のカウンタ
+		Supplier<Integer> counterForY = counter();		
+				
+		try(Stream<String> stream = Files.lines(INPUT_FILE,CHARSET)){	
+			//変換
+			return stream.map(s->{
+				int y = counterForY.get();
+				Map<String,List<Position>> datamap = new HashMap<>();
+				//X方向のカウンタ
+				Supplier<Integer> counterForX = counter();
+				split(s).forEach(d->{
+					Position position = new Position(y,counterForX.get());
+					if(datamap.containsKey(d)){
+						datamap.get(d).add(position);
+					}else {
+						datamap.put(d, new ArrayList<>(Arrays.asList(position)));
+					}
+				});	
+				return datamap;
+			//たたむ
+			}).reduce((k,v)->{			
+				v.entrySet().forEach(e->{
+					if(k.containsKey(e.getKey())){
+						k.get(e.getKey()).addAll(e.getValue());
+					}else {
+						k.put(e.getKey(), e.getValue());
+					}
+				});
+				return k;
+			}).get();
+		}
+	}
+	
+	/**
+	 * 入力ファイルは値1文字で間3文字と決まっているので、効率重視の決めうち読み込み。
+	 * 
+	 * @param s
+	 * @return
+	 */
+	private static List<String> split(String s){
+		char[] ch = s.toCharArray();
+		List<String> array = new ArrayList<>();
+		for(int i = 1; i < ch.length; i = i + 4){
+			array.add(String.valueOf(ch[i]));			
+		}
+		return array;
+	}
+		
+	/**
+	 * 座標用のカウンタ
+	 * @return 
+	 */
+	private static Supplier<Integer> counter(){
+		int count[] = new int[]{0};
+		return () -> ++count[0];
+	}
+
+	static class Position {
+		public int y;
+		public int x;
+		public Position(int y , int x){
+			this.y = y;
+			this.x = x;
+		}
+		public String toString(){
+			return String.format("%d,%d",y,x);
+		}
+	}
+}
 
 

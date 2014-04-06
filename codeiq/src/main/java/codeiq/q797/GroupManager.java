@@ -26,7 +26,7 @@ public class GroupManager {
 	 */
 	public void show(){
 		List<Integer> pointers = index.values().stream().distinct().collect(Collectors.toList());		
-		System.out.println("count = " + pointers.size());
+		System.out.println("count = " + pointers.size() + " À•W‚Ì¶ã‚Í[0,0]");
 		pointers.forEach(i->System.out.println(data.get(i)));
 		
 	}

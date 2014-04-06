@@ -17,13 +17,61 @@
 
 ■あなたが書いたコードの内容や工夫した点を簡潔に書いてください。
 
-
+・Java8 API使い倒す
+・正規表現で対応
+・フルーツ数取得の並列化
 
 ■あなたが書いたJavaのバージョンを書いてください。
 
-
+・Javaのバージョンは1.8.0
+・Eclipse 4.3でJava8コンパイル用のプラグイン使用（http://download.eclipse.org/eclipse/updates/4.3-P-builds/）
+・Mac OS X 10.9.2
+・文字コードはShift_JIS
+・改行コードはLF
 
 ■あなたが書いたコードそのものを貼り付けてください。適宜コメントも書いてください。
 
+codeiq用に作ったgithubのレポジトリにアップしています。
+入力ファイルなどもそのまま配置しているのでmvn eclipse:eclipse実行後にmainを実行すればそのまま実行できます。
+
+https://github.com/yoshidan001/sample/tree/master/codeiq/src/main/java/codeiq/q798
+
+一応はりつけておきます。
+
+public class Q798 {
+	
+	/** ログの正規表現 */
+	private static final List<Pattern> LOG_PATTERNS = Arrays.asList(new Pattern[]{Pattern.compile("\\{([^\\}]+)\\}"),Pattern.compile("\\(([^\\)]+)\\)"),Pattern.compile("\\[([^\\]]+)\\]")});
+	
+	/** ログ内フルーツの正規表現 */
+	private static final Pattern FRUITS_PATTERN = Pattern.compile("([a-z]+)");
+	
+	private static final Path INPUT_FILE = Paths.get("src/main/resources/q798/fruits.log");
+	
+	private static final Charset CHARSET = Charset.forName("Shift_JIS");
+	
+	public static void main(String[] args) throws IOException {
+	
+		try(Stream<String> stream = Files.lines(INPUT_FILE,CHARSET)){
+			stream.forEach(line -> {
+				//行毎の正規表現調査は並列処理
+				LOG_PATTERNS.parallelStream().forEach(p->{
+					Matcher matcher = p.matcher(line);
+					while( matcher.find() ){
+						String fruits = matcher.group(1);
+						Matcher fruitsMatcher = FRUITS_PATTERN.matcher(fruits);
+						int fruitCount = 0;
+						while(fruitsMatcher.find()){
+							fruitCount++;
+						}
+						System.out.println(String.format("count=%d,src=%s,regex=%s"
+								,fruitCount,line,p.toString()));
+					}			
+				});
+			});
+		}
+	}
+
+}
 
 

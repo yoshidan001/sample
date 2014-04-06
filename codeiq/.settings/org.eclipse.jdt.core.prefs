@@ -1,0 +1,9 @@
+#Sun Apr 06 15:55:52 JST 2014
+encoding//src/test/java=Shift_JIS
+org.eclipse.jdt.core.compiler.codegen.targetPlatform=1.8
+eclipse.preferences.version=1
+encoding//src/test/resources=Shift_JIS
+org.eclipse.jdt.core.compiler.source=1.8
+encoding//src/main/java=Shift_JIS
+encoding//src/main/resources=Shift_JIS
+org.eclipse.jdt.core.compiler.compliance=1.8
